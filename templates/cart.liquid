@@ -19,6 +19,6 @@
   <hr>
   <p>Total: {{ cart.total_price | money }}</p>
   <button type="submit" name="update">Update</button>
-  <button type="submit" name="checkout">Checkout</button>
+  <button type="submit" name="checkout">{{ 'General.add to cart' | t }}</button>
 {% endif %}
 {% endform %}

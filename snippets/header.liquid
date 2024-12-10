@@ -1,7 +1,64 @@
-<h1>{{ shop.name }}</h1>
+{% comment %} <h1 class="text-blue-500 font-bold bg-orange-600">{{ shop.name }}</h1>
 <ul>
     {% for link in linklists.main-menu.links -%}
        <li> {{ link.title | link_to: link.url }}</li>
       {%- endfor %}
-</ul>
+
+      <form action="/search">
+        <input type="search" name="q"/>
+        <button type="submit">Search</button>
+      </form>
+</ul> {% endcomment %}
+
+<header class="bg-[#f9f6ee] shadow">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <div class="flex items-center justify-between w-full">
+        <!-- Logo -->
+        <div class="flex-shrink-0 flex items-center">
+          <img src="https://bagonia.pk/cdn/shop/files/bagonia_512-8.png?v=1720001795" width="120" height="30">
+          {% comment %} <a href="/" class="text-lg font-bold">{{ shop.name }}</a> {% endcomment %}
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
+          {% for link in linklists.main-menu.links %}
+            <a href="{{ link.url }}" class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+              {{ link.title }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="flex items-center sm:hidden">
+        <button
+          id="mobile-menu-button"
+          class="text-gray-500"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+        >
+          <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="sm:hidden hidden">
+    <div class="pt-2 pb-3 space-y-1">
+      {% for link in linklists.main-menu.links %}
+        <a href="{{ link.url }}" class="block text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium">
+          {{ link.title }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</header>
+
+
+
+
 
