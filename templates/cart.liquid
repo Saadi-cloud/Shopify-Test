@@ -1,24 +1,52 @@
+<div class="container mx-auto">
 {% form 'cart', cart %}
-  <h1>cart page</h1>
-
   {% if cart.empty? %}
     <p>Your Cart is empty</p>
   {% else %}
-
-  {% for item in cart.items %}
-    <div>
-      <img src="{{ item.image | image_url }}" width="300" height="auto">
-      <h2>{{ item.title }}</h2>
-      <p>Price: {{ item.final_line_price | money }}</p>
-      <div class="mb-2">
-        <input type="number" name="updates[{{ item.key }}]" value="{{ item.quantity }}" min="0">
-        <a href="{{ item.url_to_remove }}" class="text-danger">Remove</a>
+    {% for item in cart.items %}
+      <div class="flex items-center border-b pb-4 mb-4 mt-5">
+        <div>
+          <img
+            src="{{ item.image | image_url }}"
+            alt="{{ item.title }}"
+            width="300"
+            height="auto"
+            class="rounded"
+          >
+        </div>
+        <div class="ml-4">
+          <h2 class="text-lg font-semibold">{{ item.title }}</h2>
+          <p id="price-{{ item.key }}" class="text-sm text-gray-500">
+            Price: {{ item.final_line_price | money }}
+          </p>
+          <div class="flex items-center mt-2 space-x-2">
+            <button
+              type="button"
+              class="px-3 py-1 bg-gray-200 rounded text-lg font-bold hover:bg-gray-300"
+              onclick="updateQuantity('{{ item.key }}', -1, {{ item.final_line_price }})"
+            >
+              -
+            </button>
+            <span id="quantity-{{ item.key }}" class="text-lg font-semibold text-gray-700">
+              {{- item.quantity -}}
+            </span>
+            <button
+              type="button"
+              class="px-3 py-1 bg-gray-200 rounded text-lg font-bold hover:bg-gray-300"
+              onclick="updateQuantity('{{ item.key }}', 1, {{ item.final_line_price }})"
+            >
+              +
+            </button>
+          </div>
+          <a href="{{ item.url_to_remove }}" class="text-red-500 mt-2 block hover:underline">Remove</a>
+        </div>
       </div>
-    </div>
-  {% endfor %}
-  <hr>
-  <p>Total: {{ cart.total_price | money }}</p>
-  <button type="submit" name="update">Update</button>
-  <button type="submit" name="checkout">{{ 'General.add to cart' | t }}</button>
-{% endif %}
+    {% endfor %}
+   
+    <p>
+      Total: <span id="total-price">{{ cart.total_price | money }}</span>
+    </p>
+    <button type="submit" name="checkout" class="bg-green-500 text-white px-4 py-2 rounded">Checkout</button>
+  {% endif %}
 {% endform %}
+</div>

@@ -1,18 +1,145 @@
-<div class="flex flex-wrap items-center">
-  {% for image in product.images %}
-    <div class="slide-item">
-      <img src="{{ image.src | image_url}}" width="250" height="auto">
+<div class="container mx-auto">
+  <div class="grid grid-cols-12 gap-4 lg:my-20">
+    <!-- Image Section -->
+    <div class="col-span-12 lg:col-span-7">
+      <div class="flex flex-wrap items-center gap-4">
+        {% for image in product.images %}
+          <div class="slide-item">
+            <img src="{{ image.src | image_url }}" class="rounded-lg lg:w-[305px] 2xl:w-[355px] h-auto">
+          </div>
+        {% endfor %}
+      </div>
     </div>
-  {% endfor %}
-</div>
 
-<h1>{{ product.title }}</h1>
-<p>{{ product.price | money }}</p>
-{% form 'product', product %}
-  <select name="id">
-    {% for variant in product.variants %}
-      <option value="{{ variant.id }}">{{ variant.title }}</option>
-    {% endfor %}
-  </select>
-  <button type="submit" style="cursor: pointer">Add to Cart</button>
-{% endform %}
+    <!-- Text Section -->
+    <div class="col-span-12 lg:col-span-5">
+      <h1 class="uppercase font-medium text-2xl py-3">{{ product.title }}</h1>
+      <p class="text-md leading-6">{{ product.description }}</p>
+      <div class="flex items-center gap-2 py-2">
+        <del class="text-[#35302e] opacity-[0.4]">{{ product.compare_at_price | money }}</del>
+        <p>{{ product.price | money }}</p>
+      </div>
+
+      {% form 'product', product %}
+        <div class="my-2">
+          <table class="table-auto w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th class="border border-gray-300 px-4 py-2">Size</th>
+                <th class="border border-gray-300 px-4 py-2">Weight</th>
+                <th class="border border-gray-300 px-4 py-2">Height</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-gray-300 text-center px-4 py-2">
+                  <select id="size" name="options[Size]" class="border-2 rounded-lg p-1 w-full">
+                    {% for value in product.options_with_values[0].values %}
+                      <option value="{{ value }}">{{ value }}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+                <td class="border border-gray-300 text-center px-4 py-2">
+                  {% for value in product.options_with_values[1].values %}
+                    {{ value }}
+                  {% endfor %}
+                </td>
+                <td class="border border-gray-300 text-center px-4 py-2">
+                  {% for value in product.options_with_values[2].values %}
+                    {{ value }}
+                  {% endfor %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button
+          type="submit"
+          class="mt-4 w-full text-[#151515] border-2 uppercase font-medium border-[#151515] rounded px-4 py-2"
+        >
+          Add to Cart
+        </button>
+        <button class="mt-4 w-full text-white bg-[#4e423e] border-2 uppercase font-medium border-[#151515] rounded px-4 py-2">
+          Buy it now
+        </button>
+      {% endform %}
+
+      <!-- Product Form -->
+      {% form 'product', product %}
+        <select name="id" class="border-2 rounded-lg p-1">
+          {% for variant in product.variants %}
+            <option value="{{ variant.id }}">{{ variant.title }}</option>
+          {% endfor %}
+        </select>
+          <button
+            type="submit"
+            style="cursor: pointer"
+            class="mt-4 bg-blue-500 text-white rounded-lg px-4 py-2"
+          >
+            Add to Cart
+          </button>
+      {% endform %}
+
+      <!-- Cart Drawer -->
+      <div id="cartDrawer" class="cart-drawer">
+        <div class="cart-drawer-content">
+          <div class="flex items-center">
+            <h1 class="text-lg mb-5">Cart</h1>
+            <button class="close-drawer" onclick="hideCartDrawer()">×</button>
+          </div>
+          {% form 'cart', cart %}
+            {% if cart.empty? %}
+              <p>Your Cart is empty</p>
+            {% else %}
+              {% for item in cart.items %}
+                <div class="flex items-center border-b pb-4 mb-4">
+                  <div>
+                    <img
+                      src="{{ item.image | image_url }}"
+                      alt="{{ item.title }}"
+                      width="96"
+                      height="auto"
+                      class="rounded"
+                    >
+                  </div>
+                  <div class="ml-4">
+                    <h2 class="text-lg font-semibold">{{ item.title }}</h2>
+                    <p id="price-{{ item.key }}" class="text-sm text-gray-500">
+                      Price: {{ item.final_line_price | money }}
+                    </p>
+                    <div class="flex items-center mt-2 space-x-2">
+                      <button
+                        type="button"
+                        class="px-3 py-1 bg-gray-200 rounded text-lg font-bold hover:bg-gray-300"
+                        onclick="updateQuantity('{{ item.key }}', -1, {{ item.final_line_price }})"
+                      >
+                        -
+                      </button>
+                      <span id="quantity-{{ item.key }}" class="text-lg font-semibold text-gray-700">
+                        {{- item.quantity -}}
+                      </span>
+                      <button
+                        type="button"
+                        class="px-3 py-1 bg-gray-200 rounded text-lg font-bold hover:bg-gray-300"
+                        onclick="updateQuantity('{{ item.key }}', 1, {{ item.final_line_price }})"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <a href="{{ item.url_to_remove }}" class="text-red-500 mt-2 block hover:underline">Remove</a>
+                  </div>
+                </div>
+              {% endfor %}
+              <hr>
+              <p>
+                Total: <span id="total-price">{{ cart.total_price | money }}</span>
+              </p>
+              <button type="submit" name="update" class="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+              <button type="submit" name="checkout" class="bg-green-500 text-white px-4 py-2 rounded">Checkout</button>
+            {% endif %}
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
