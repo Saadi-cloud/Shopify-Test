@@ -1,0 +1,39 @@
+<div class="container mx-auto">
+    <h2 class="text-center text-2xl my-5 font-bold">{{ page.title }}</h2>
+    <div class="flex justify-center">
+      {% form 'contact' %}
+        {{ form.errors | default_errors }}
+        <div class="flex gap-4 w-[800px] flex-wrap">
+        <div class="first-name my-2">
+          <label for="first-name">First name</label><br>
+          <input type="text" class="border rounded w-[390px] p-2" name="contact[first_name]" id="first-name">
+        </div>
+  
+        <div class="last-name my-2">
+          <label for="last-name">Last name</label><br>
+          <input class="border rounded w-[390px] p-2" type="text" name="contact[last_name]" id="last-name">
+        </div>
+      </div>
+  
+        <div class="phone">
+          <label for="phone">Phone</label><br>
+          <input class="border rounded w-full p-2" type="tel" name="contact[phone]" id="phone">
+        </div>
+  
+        <div class="email my-2">
+          <label for="email">Email</label><br>
+          <input class="border rounded w-full p-2" type="email" name="contact[email]" id="email">
+        </div>
+  
+        <div class="message">
+          <label for="message">Message</label><br>
+          <textarea class="border rounded w-full p-2" name="contact[body]" id="message"></textarea>
+        </div>
+  
+        <div class="submit mt-3 bg-[#4e423e] text-center py-4 rounded w-full text-white">
+          <input type="submit" value="Send Message">
+        </div>
+      {% endform %}
+    </div>
+  </div>
+  

@@ -1,52 +1,87 @@
 <div class="container mx-auto">
-{% form 'cart', cart %}
-  {% if cart.empty? %}
-    <p>Your Cart is empty</p>
-  {% else %}
-    {% for item in cart.items %}
-      <div class="flex items-center border-b pb-4 mb-4 mt-5">
-        <div>
-          <img
-            src="{{ item.image | image_url }}"
-            alt="{{ item.title }}"
-            width="300"
-            height="auto"
-            class="rounded"
-          >
-        </div>
-        <div class="ml-4">
-          <h2 class="text-lg font-semibold">{{ item.title }}</h2>
-          <p id="price-{{ item.key }}" class="text-sm text-gray-500">
-            Price: {{ item.final_line_price | money }}
-          </p>
-          <div class="flex items-center mt-2 space-x-2">
-            <button
-              type="button"
-              class="px-3 py-1 bg-gray-200 rounded text-lg font-bold hover:bg-gray-300"
-              onclick="updateQuantity('{{ item.key }}', -1, {{ item.final_line_price }})"
+  {% form 'cart', cart %}
+    {% if cart.empty? %}
+      <p>Your Cart is empty</p>
+    {% else %}
+      {% for item in cart.items %}
+        <div class="flex items-center border-b pb-4 mb-4 mt-5">
+          <div>
+            <img
+              src="{{ item.image | image_url }}"
+              alt="{{ item.title }}"
+              width="200"
+              height="auto"
+              class="rounded"
             >
-              -
-            </button>
-            <span id="quantity-{{ item.key }}" class="text-lg font-semibold text-gray-700">
-              {{- item.quantity -}}
-            </span>
-            <button
-              type="button"
-              class="px-3 py-1 bg-gray-200 rounded text-lg font-bold hover:bg-gray-300"
-              onclick="updateQuantity('{{ item.key }}', 1, {{ item.final_line_price }})"
-            >
-              +
-            </button>
           </div>
-          <a href="{{ item.url_to_remove }}" class="text-red-500 mt-2 block hover:underline">Remove</a>
+          <div class="ml-4">
+            <h2 class="text-base font-semibold">{{ item.title }}</h2>
+            <p id="price-{{ item.key }}" class="text-sm text-gray-500">Price: {{ item.final_line_price | money }}</p>
+            <div class="flex items-center mt-2 space-x-2">
+              <button
+                type="button"
+                class="px-3 py-1 bg-gray-200 rounded text-lg font-bold hover:bg-gray-300"
+                onclick="updateQuantity('{{ item.key }}', -1, {{ item.line_price }})"
+              >
+                -
+              </button>
+              <span
+                id="quantity-{{ item.key }}"
+                data-unit-price="{{ item.line_price }}"
+                class="text-lg font-semibold text-gray-700"
+              >
+                {{- item.quantity -}}
+              </span>
+              <button
+                type="button"
+                class="px-3 py-1 bg-gray-200 rounded text-lg font-bold hover:bg-gray-300"
+                onclick="updateQuantity('{{ item.key }}', 1, {{ item.line_price }})"
+              >
+                +
+              </button>
+            </div>
+            <a href="{{ item.url_to_remove }}" class="text-red-500 mt-2 text-sm block hover:underline">Remove</a>
+          </div>
         </div>
-      </div>
-    {% endfor %}
-   
-    <p>
-      Total: <span id="total-price">{{ cart.total_price | money }}</span>
-    </p>
-    <button type="submit" name="checkout" class="bg-green-500 text-white px-4 py-2 rounded">Checkout</button>
-  {% endif %}
-{% endform %}
+      {% endfor %}
+
+      <p>
+        Total: <span id="total-price">{{ cart.total_price | money }}</span>
+      </p>
+      <button type="submit" name="checkout" class="bg-green-500 text-white px-4 py-2 rounded">Checkout</button>
+    {% endif %}
+  {% endform %}
+
+  <script>
+    function updateQuantity(itemKey, change, unitPrice) {
+      const quantityElement = document.getElementById(`quantity-${itemKey}`);
+      const priceElement = document.getElementById(`price-${itemKey}`);
+      const totalPriceElement = document.getElementById('total-price');
+
+      // Get current quantity and calculate new quantity
+      let currentQuantity = parseInt(quantityElement.textContent);
+      let newQuantity = currentQuantity + change;
+
+      // Prevent negative quantity
+      if (newQuantity < 1) return;
+
+      // Update the quantity
+      quantityElement.textContent = newQuantity;
+
+      // Calculate and update item price
+      const newItemPrice = newQuantity * unitPrice;
+      priceElement.textContent = `Price: $${(newItemPrice / 100).toFixed(2)}`;
+
+      // Update total price
+      let total = 0;
+      document.querySelectorAll('[data-unit-price]').forEach((element) => {
+        const qty = parseInt(element.textContent);
+        const price = parseInt(element.getAttribute('data-unit-price'));
+        total += qty * price;
+      });
+
+      // Update total price in the UI
+      totalPriceElement.textContent = `$${(total / 100).toFixed(2)}`;
+    }
+  </script>
 </div>

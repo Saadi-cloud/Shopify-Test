@@ -5,7 +5,7 @@
       <div class="flex flex-wrap items-center gap-4">
         {% for image in product.images %}
           <div class="slide-item">
-            <img src="{{ image.src | image_url }}" class="rounded-lg lg:w-[305px] 2xl:w-[355px] h-auto">
+            <img src="{{ image.src | image_url }}" width="" height="" class="rounded-lg lg:w-[305px] 2xl:w-[355px] h-auto">
           </div>
         {% endfor %}
       </div>
@@ -20,7 +20,7 @@
         <p>{{ product.price | money }}</p>
       </div>
 
-      {% form 'product', product %}
+      {% form 'product', product, url: '/cart/add' %}
         <div class="my-2">
           <table class="table-auto w-full border-collapse border border-gray-300">
             <thead>
@@ -53,6 +53,7 @@
             </tbody>
           </table>
         </div>
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
         <button
           type="submit"
           class="mt-4 w-full text-[#151515] border-2 uppercase font-medium border-[#151515] rounded px-4 py-2"
@@ -63,9 +64,10 @@
           Buy it now
         </button>
       {% endform %}
+      
 
       <!-- Product Form -->
-      {% form 'product', product %}
+      {% comment %} {% form 'product', product %}
         <select name="id" class="border-2 rounded-lg p-1">
           {% for variant in product.variants %}
             <option value="{{ variant.id }}">{{ variant.title }}</option>
@@ -78,7 +80,7 @@
           >
             Add to Cart
           </button>
-      {% endform %}
+      {% endform %} {% endcomment %}
 
       <!-- Cart Drawer -->
       <div id="cartDrawer" class="cart-drawer">
@@ -143,3 +145,7 @@
     </div>
   </div>
 </div>
+
+
+
+

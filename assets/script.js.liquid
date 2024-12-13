@@ -23,57 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('cartDrawer').style.right = '-100%';
   }
 
-  function updateQuantity(itemKey, change, unitPrice) {
-    const quantityElement = document.getElementById(`quantity-${itemKey}`);
-    const priceElement = document.getElementById(`price-${itemKey}`);
-    const totalPriceElement = document.getElementById('total-price');
+
+
   
-    // Parse current quantity and calculate new quantity
-    let currentQuantity = parseInt(quantityElement.textContent, 10);
-    const newQuantity = Math.max(0, currentQuantity + change); // Ensure quantity is never negative
-  
-    // Update quantity display
-    quantityElement.textContent = newQuantity;
-  
-    // Update item price
-    const newPrice = newQuantity * unitPrice;
-    priceElement.textContent = `Price: $${(newPrice / 100).toFixed(2)}`; // Assuming price is in cents
-  
-    // Update total price
-    let total = 0;
-    document.querySelectorAll("[id^='quantity-']").forEach((quantityEl) => {
-      const itemKey = quantityEl.id.split('-')[1];
-      const quantity = parseInt(quantityEl.textContent, 10);
-      const itemPrice = document.getElementById(`price-${itemKey}`).textContent.match(/[\d.]+/g);
-      if (itemPrice) {
-        total += parseFloat(itemPrice[0]) * 100; // Convert back to cents
-      }
-    });
-    totalPriceElement.textContent = `$${(total / 100).toFixed(2)}`;
-  
-    // Optionally update the cart via AJAX
-    updateCart(itemKey, newQuantity);
-  }
-  
-  function updateCart(itemKey, quantity) {
-    // Make an AJAX request to update the cart
-    fetch('/cart/update.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        updates: {
-          [itemKey]: quantity,
-        },
-      }),
-    })
-      .then((response) => response.json())
-      .then((cart) => {
-        console.log('Cart updated:', cart);
-      })
-      .catch((error) => {
-        console.error('Error updating cart:', error);
-      });
-  }
+
 
 
   
